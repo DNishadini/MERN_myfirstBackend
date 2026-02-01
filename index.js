@@ -2,8 +2,14 @@ import express from "express";
 
 const app = express();
 
-function success() {
-  console.log("Server is started");
-}
+app.get("/", () => {
+  console.log("Get request received");
+});
 
-app.listen(5000, success);
+app.post("/", () => {
+  console.log("Post request received");
+});
+
+app.listen(5000, () => {
+  console.log("Server is started");
+});
