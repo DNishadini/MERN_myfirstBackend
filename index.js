@@ -6,26 +6,44 @@ const app = express();
 app.use(express.json());
 
 const connectionString =
-  "mongodb+srv://admin:123@cluster0.rgafwkz.mongodb.net/?appName=Cluster0";
+  "mongodb+srv://admin:123@cluster0.ocdf7bj.mongodb.net/?appName=Cluster0";
 mongoose
   .connect(connectionString)
   .then(() => {
     console.log("Database connected");
   })
-  .catch(() => {
-    console.log("Database connection failed");
+  .catch((err) => {
+    console.log("Database connection failed", err);
   });
 
-app.get("/", (req, res) => {
-  console.log(req.body);
-  console.log("Get request received");
-  res.json({
-    message: "Hello world",
-  });
+const studentSchema = new mongoose.Schema({
+  name: String,
+  age: Number,
+  city: String,
 });
+
+const Student = mongoose.model("Student", studentSchema);
+app.get("/", (req, res) => {});
 
 app.post("/", (req, res) => {
   console.log("Post request received");
+  const student = new Student({
+    name: req.body.name,
+    age: req.body.age,
+    city: req.body.city,
+  });
+  student
+    .save()
+    .then(() => {
+      res.json({
+        message: "student creation successfully",
+      });
+    })
+    .catch(() => {
+      res.json({
+        message: "student creation fail",
+      });
+    });
 });
 
 app.delete("/", (req, res) => {
