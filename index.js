@@ -17,7 +17,9 @@ mongoose
     console.log("Database connection failed", err);
   });
 
-app.get("/", (req, res) => {});
+app.get("/", (req, res) => {
+  console.log("Get request received");
+});
 
 app.post("/", (req, res) => {
   console.log("Post request received");
