@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
-import Student from "./models/student.js";
+
+import studentRouter from "./routes/studentsRouter.js";
 
 const app = express();
 
@@ -17,34 +18,7 @@ mongoose
     console.log("Database connection failed", err);
   });
 
-app.get("/", (req, res) => {
-  console.log("Get request received");
-});
-
-app.post("/", (req, res) => {
-  console.log("Post request received");
-  const student = new Student({
-    name: req.body.name,
-    age: req.body.age,
-    city: req.body.city,
-  });
-  student
-    .save()
-    .then(() => {
-      res.json({
-        message: "student creation successfully",
-      });
-    })
-    .catch(() => {
-      res.json({
-        message: "student creation fail",
-      });
-    });
-});
-
-app.delete("/", (req, res) => {
-  console.log("Delete request received");
-});
+app.use("/students", studentRouter);
 
 app.listen(5000, () => {
   console.log("Server is started");
