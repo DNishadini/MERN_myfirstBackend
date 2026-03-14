@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 
 import studentRouter from "./routes/studentsRouter.js";
+import userRouter from "./routes/userRouter.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ mongoose
   });
 
 app.use("/students", studentRouter);
+app.use("/users", userRouter);
 
 app.listen(5000, () => {
   console.log("Server is started");
