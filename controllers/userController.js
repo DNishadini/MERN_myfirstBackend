@@ -4,6 +4,20 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export function createUser(req, res) {
+  if (req.user == null) {
+    res.status(401).json({
+      message: "Please login to create user",
+    });
+    return;
+  }
+
+  if (req.user.role !== "admin") {
+    res.status(403).json({
+      message: "Only admin can create user",
+    });
+    return;
+  }
+
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
   const user = new User({
     email: req.body.email,
@@ -30,7 +44,7 @@ export function loginUser(req, res) {
     email: req.body.email,
   }).then((user) => {
     if (user == null) {
-      res.json({
+      res.status(404).json({
         message: "User not found",
       });
     } else {
@@ -54,7 +68,7 @@ export function loginUser(req, res) {
           token: token,
         });
       } else {
-        res.json({
+        res.status(401).json({
           message: "Incorrect password",
         });
       }
