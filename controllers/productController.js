@@ -1,4 +1,5 @@
-import Product from "../models/product";
+import Product from "../models/product.js";
+import { isAdmin } from "./userController.js";
 
 export async function createProduct(req, res) {
   if (!isAdmin(req)) {
@@ -11,15 +12,15 @@ export async function createProduct(req, res) {
   try {
     const productData = req.body;
     const product = new Product(productData);
-    await Product.Save();
+    await product.save();
     res.json({
       message: "Product created successfully",
       product: product,
     });
   } catch (err) {
+    console.error("Error creating product:", err);
     res.status(500).json({
       message: "Error creating product",
-      error: err,
     });
   }
 }

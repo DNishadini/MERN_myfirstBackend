@@ -1,5 +1,5 @@
-import e from "express";
-import User from "../models/User.js";
+import express from "express";
+import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -19,12 +19,15 @@ export function createUser(req, res) {
   }
 
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+
   const user = new User({
     email: req.body.email,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     password: hashedPassword,
+    role: req.body.role,
   });
+
   user
     .save()
     .then(() => {
@@ -32,9 +35,10 @@ export function createUser(req, res) {
         message: "User created successfully",
       });
     })
-    .catch(() => {
-      res.json({
+    .catch((err) => {
+      res.status(500).json({
         message: "Error creating user",
+        error: err.message,
       });
     });
 }
@@ -74,4 +78,14 @@ export function loginUser(req, res) {
       }
     }
   });
+}
+
+export function isAdmin(req) {
+  if (req.user == null) {
+    return false;
+  }
+  if (req.user.role !== "admin") {
+    return false;
+  }
+  return true;
 }
