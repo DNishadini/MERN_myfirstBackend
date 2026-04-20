@@ -1,8 +1,7 @@
-// backend/index.js
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import taskRoutes from "./taskRoutes.js"; // Import routes
+import taskRoutes from "./routes/taskRoutes.js"; // Import routes
 import cors from "cors"; // Optional: To enable cross-origin requests (for React frontend)
 
 // Load environment variables from .env file
@@ -19,11 +18,11 @@ app.use(cors());
 
 // MongoDB connection string from .env
 const mongoURI =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/taskManager";
+  process.env.MONGO_URI || "mongodb://localhost:27017/taskManager";
 
 // Connect to MongoDB
 mongoose
-  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(mongoURI) // No need for useNewUrlParser or useUnifiedTopology anymore
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
