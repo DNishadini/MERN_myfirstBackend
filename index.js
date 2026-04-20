@@ -1,60 +1,37 @@
+// backend/index.js
 import express from "express";
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
-import cors from "cors";
 import dotenv from "dotenv";
+import taskRoutes from "./taskRoutes.js"; // Import routes
+import cors from "cors"; // Optional: To enable cross-origin requests (for React frontend)
 
+// Load environment variables from .env file
 dotenv.config();
 
-import studentRouter from "./routes/studentsRouter.js";
-import userRouter from "./routes/userRouter.js";
-import productRouter from "./routes/productRouter.js";
-
+// Create an Express app
 const app = express();
 
+// Middleware to parse JSON requests
 app.use(express.json());
+
+// Enable Cross-Origin Requests (CORS) for React to interact with the backend
 app.use(cors());
 
-app.use((req, res, next) => {
-  let token = req.header("Authorization");
+// MongoDB connection string from .env
+const mongoURI =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/taskManager";
 
-  if (!token) {
-    return next();
-  }
-
-  token = token.replace("Bearer ", "");
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err || decoded == null) {
-      return res.status(401).json({
-        message: "Invalid token, please login again",
-      });
-    }
-
-    req.user = decoded;
-    next();
-  });
-});
-
-app.get("/", (req, res) => {
-  res.send("Server is running");
-});
-
-const connectionString = process.env.MONGO_URI;
-
+// Connect to MongoDB
 mongoose
-  .connect(connectionString)
-  .then(() => {
-    console.log("Database connected");
-  })
-  .catch((err) => {
-    console.log("Database connection failed", err);
-  });
+  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-app.use("/students", studentRouter);
-app.use("/api/users", userRouter);
-app.use("/api/products", productRouter);
+// Use taskRoutes to handle /tasks endpoint
+app.use("/tasks", taskRoutes);
 
-app.listen(5000, () => {
-  console.log("Server is started");
+// Define port and start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
